@@ -10,5 +10,6 @@
     "types": [
       "googlemaps"
     ],
+    "lib": ["es2015", "dom"]
   }
 }
