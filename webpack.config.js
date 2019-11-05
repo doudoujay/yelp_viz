@@ -6,13 +6,12 @@ module.exports = {
   devtool: 'inline-source-map',
   devServer: {
 	  contentBase: './dist',
-	  hot: true,
 	  watchContentBase: true,
   },
   plugins: [
     // new CleanWebpackPlugin(['dist/*']) for < v2 versions of CleanWebpackPlugin
     new HtmlWebpackPlugin({
-      title: 'Development',
+      template: './src/index.html',
     }),
   ],
   mode: 'development',
