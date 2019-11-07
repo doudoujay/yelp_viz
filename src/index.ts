@@ -35,21 +35,33 @@ function initMap() {
     (<any>window).map = map;
 
     const uniqueStates = new Set(businesses.map(d => d.city));
-    let colorScale = createColorScale(uniqueStates);
-    businesses.map(node => {
+    let colorScale = d3.scaleSequential(d3.interpolateHcl("yellow", "red"))
+        .domain(d3.extent(businesses, d => d.review_count))
+    let nodes = businesses.map(node => {
         let circle = new google.maps.Circle({
             strokeColor: "white",
             strokeOpacity: 1,
             strokeWeight: 1,
-            fillColor: colorScale(node.city),
+            fillColor: colorScale(node.review_count),
             fillOpacity: 0.8,
             map: map,
             center: {lat: node.latitude, lng: node.longitude},
             radius: node.stars * 10,
             zIndex: -1,
         });
+        circle.set('data', node);
         return circle;
-    })
+    });
+    let sizeScale = d3.scaleSqrt()
+        .domain(d3.extent(businesses, d => d.review_count))
+        .range([0, 20]);
+    map.addListener('zoom_changed', _ => {
+        // Adapted from https://medium.com/techtrument/how-many-miles-are-in-a-pixel-a0baf4611fff
+        let meters_per_px = 156543.03392 / Math.pow(2, map.getZoom());
+        nodes.forEach(node => {
+            node.setRadius(sizeScale((node.get('data')).review_count)*meters_per_px);
+        });
+    });
 }
 
 (<any>window).initMap = initMap;
