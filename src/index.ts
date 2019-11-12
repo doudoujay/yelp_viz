@@ -26,7 +26,7 @@ interface Edge {
 }
 
 let businesses = raw_businesses as Array<Node>
-let edges = raw_edges as Array<Edge>;
+let edges = (raw_edges as Array<Edge>).filter(d => d.data.length >= 7);
 
 function createColorScale(keys: Array<string> | Set<string>) {
     if (!Array.isArray(keys)) {
@@ -106,9 +106,7 @@ function initMap() {
         });
     });
 
-    let filtered_edges = edges.filter(d => d.data.length >= 7);
-
-    const linkWeightRange = d3.extent(filtered_edges, d => d.data.length);
+    const linkWeightRange = d3.extent(edges, d => d.data.length);
     const linkColorScale = d3.scaleSqrt<string>()
         .domain(linkWeightRange)
         .range(['yellow', 'red'])
@@ -116,7 +114,7 @@ function initMap() {
     const linkOpacityScale = d3.scaleLog().domain(linkWeightRange).range([0.3, 1]);
     const linkWidthScale = d3.scaleLog().domain(linkWeightRange).range([1, 5]);
 
-    let links = filtered_edges.map(link => {
+    let links = edges.map(link => {
         let l = new google.maps.Polyline({
             path: [link.source, link.destination],
             map: map,
@@ -124,9 +122,11 @@ function initMap() {
             strokeWeight: linkWidthScale(link.data.length),
             zIndex: -2,
             strokeOpacity: linkOpacityScale(link.data.length),
+            visible: false,
         });
         link.source.links.push(l);
         link.destination.links.push(l);
+        l.set('data', link);
         return l;
     });
 }
