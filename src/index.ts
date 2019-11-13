@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { businesses, edges, BusinessNode } from './data';
 import { initGeoLayout } from './geo'
+import { initForceLayout } from './force';
 
 function createColorScale(keys: Array<string> | Set<string>) {
     if (!Array.isArray(keys)) {
@@ -31,4 +32,11 @@ function preprocess() {
 }
 
 preprocess();
-initGeoLayout(businesses, edges);
+let geoElement = document.getElementById('google-map');
+let forceElement = document.getElementById('force-directed');
+function init() {
+    initGeoLayout(businesses, edges, geoElement);
+    initForceLayout(businesses, edges, forceElement);
+}
+
+(<any>window).init = init;

@@ -1,7 +1,7 @@
 import { BusinessNode, Edge } from "./data";
 import * as d3 from 'd3';
 
-export function initGeoLayout(businesses: BusinessNode[], edges: Edge[]) {
+export function initGeoLayout(businesses: BusinessNode[], edges: Edge[], container: HTMLElement) {
     function initMap() {
         const labelsOff: google.maps.MapTypeStyle[] = [
             {
@@ -12,7 +12,7 @@ export function initGeoLayout(businesses: BusinessNode[], edges: Edge[]) {
                 ]
             }
         ];
-        let map = new google.maps.Map(document.getElementById("google-map"), {
+        let map = new google.maps.Map(container, {
             zoom: 13,
             // Centerd at Illinois. The user should be able to see al IL
             // businesses at this view point
@@ -77,6 +77,5 @@ export function initGeoLayout(businesses: BusinessNode[], edges: Edge[]) {
             return l;
         });
     }
-
-(<any>window).initMap = initMap;
+    initMap();
 }
