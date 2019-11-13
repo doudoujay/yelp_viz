@@ -25,7 +25,7 @@ function preprocess() {
     });
     edges.forEach(e => {
         e.source = id_to_idx[e.src];
-        e.destination = id_to_idx[e.dst];
+        e.target = id_to_idx[e.dst];
     });
     (<any>window).edges = edges;
     (<any>window).businesses = businesses;
@@ -37,9 +37,9 @@ let forceElement = document.getElementById('force-directed');
 
 function init() {
     if ((<any>document.getElementById('geo')).checked) {
-        initGeoLayout(businesses, edges, geoElement);
+        changeLayout('geo');
     } else {
-        initForceLayout(businesses, edges, forceElement);
+        changeLayout('force');
     }
 }
 

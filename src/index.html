@@ -4,6 +4,15 @@
     <title>Getting Started</title>
     <link rel="shortcut icon" type="image/png" href="./assets/favicon.ico"/>
     <script src="https://unpkg.com/lodash@4.16.6"></script>
+		<style>
+        line.link {
+          stroke:lightskyblue;
+          stroke-width: 1px;
+        }
+        circle.node {
+          fill:darkorange;
+        }
+      </style>
   </head>
   <body style="width: 100%;">
     <div id="google-map" style="height: 90vh; width: 70vw;"></div>
@@ -11,10 +20,10 @@
     <div>
       <span>Select a display style:</span>
       <input type="radio" id="geo" name="drone" value="geo"
-      onchange="changeLayout(this.value);" checked>
+      onchange="changeLayout(this.value);">
       <label for="geo">Geographical Layout</label>
     
-      <input type="radio" id="force" name="drone" value="force" onchange="changeLayout(this.value);">
+      <input type="radio" id="force" name="drone" value="force" onchange="changeLayout(this.value);" checked>
       <label for="force">Force Directed Layout</label>
     </div>
     

@@ -24,8 +24,8 @@ export interface Edge {
     src: string,
     dst: string,
     data: Array<string>,
-    source?: BusinessNode,
-    destination?: BusinessNode,
+    source: BusinessNode,
+    target: BusinessNode,
 }
 
 export let businesses = raw_businesses as Array<BusinessNode>;

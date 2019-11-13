@@ -64,7 +64,7 @@ export function initGeoLayout(businesses: BusinessNode[], edges: Edge[], contain
 
         let links = edges.map(link => {
             let l = new google.maps.Polyline({
-                path: [link.source, link.destination],
+                path: [link.source, link.target],
                 map: map,
                 strokeColor: linkColorScale(link.data.length),
                 strokeWeight: linkWidthScale(link.data.length),
@@ -72,7 +72,7 @@ export function initGeoLayout(businesses: BusinessNode[], edges: Edge[], contain
                 strokeOpacity: linkOpacityScale(link.data.length),
             });
             link.source.links.push(l);
-            link.destination.links.push(l);
+            link.target.links.push(l);
             l.set('data', link);
             return l;
         });

@@ -16,6 +16,11 @@ export function initForceLayout(businesses: BusinessNode[], edges: Edge[], conta
         .append("circle")
         .attr("r", 3)
         .classed('node', true);
+    let links = svg.append("g").classed("links_container", true)
+        .selectAll(".link")
+        .data(edges)
+        .enter().append("line")
+            .classed("link", true);
     let x = d3.scaleLinear()
         .domain([0, 30])
         .range([0, width]);
@@ -28,10 +33,15 @@ export function initForceLayout(businesses: BusinessNode[], edges: Edge[], conta
         nodes
             .attr("cx", d => x(d.x))
             .attr("cy", d => y(d.y));
+        links
+            .attr("x1", d => x(d.source.x))
+            .attr("y1", d => y(d.source.y))
+            .attr("x2", d => x(d.target.x))
+            .attr("y2", d => y(d.target.y));
     }
     let simulation = d3.forceSimulation(businesses)
-        // .force('charge', d3.forceManyBody().strength(-1))
-        // .force('center', d3.forceCenter(width / 2, height / 2))
-        // .force('link', d3.forceLink().links(data.links))
+        .force('charge', d3.forceManyBody().strength(-1))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('link', d3.forceLink().links(edges))
         .on('tick', ticked);
 }
