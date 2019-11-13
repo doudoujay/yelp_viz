@@ -43,15 +43,21 @@ function init() {
     }
 }
 
+function removeAllDescendants(elem: HTMLElement) {
+    while (elem.firstChild) {
+        elem.removeChild(elem.firstChild);
+    }
+}
+
 function changeLayout(layout: string) {
     console.log(layout);
     if (layout == 'force') {
-        geoElement.innerHTML = '';
+        removeAllDescendants(geoElement);
         geoElement.style.display = 'none';
         initForceLayout(businesses, edges, forceElement);
         forceElement.style.display = '';
     } else if (layout == 'geo') {
-        forceElement.innerHTML = '';
+        removeAllDescendants(forceElement);
         forceElement.style.display = 'none';
         initGeoLayout(businesses, edges, geoElement);
         geoElement.style.display = '';
