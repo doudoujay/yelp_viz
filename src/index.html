@@ -8,6 +8,16 @@
   <body style="width: 100%;">
     <div id="google-map" style="height: 90vh; width: 70vw;"></div>
     <div id="force-directed" style="height: 90vh; width: 70vw; display: none;"></div>
+    <div>
+      <span>Select a display style:</span>
+      <input type="radio" id="geo" name="drone" value="geo"
+      onchange="changeLayout(this.value);" checked>
+      <label for="geo">Geographical Layout</label>
+    
+      <input type="radio" id="force" name="drone" value="force" onchange="changeLayout(this.value);">
+      <label for="force">Force Directed Layout</label>
+    </div>
+    
   </body>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6tYVOSsxfy-HqlK2ztR0xkb6oN1deygI&callback=init"></script>
 </html>

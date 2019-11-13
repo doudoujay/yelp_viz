@@ -34,9 +34,31 @@ function preprocess() {
 preprocess();
 let geoElement = document.getElementById('google-map');
 let forceElement = document.getElementById('force-directed');
+
 function init() {
-    initGeoLayout(businesses, edges, geoElement);
-    initForceLayout(businesses, edges, forceElement);
+    if ((<any>document.getElementById('geo')).checked) {
+        initGeoLayout(businesses, edges, geoElement);
+    } else {
+        initForceLayout(businesses, edges, forceElement);
+    }
+}
+
+function changeLayout(layout: string) {
+    console.log(layout);
+    if (layout == 'force') {
+        geoElement.innerHTML = '';
+        geoElement.style.display = 'none';
+        initForceLayout(businesses, edges, forceElement);
+        forceElement.style.display = '';
+    } else if (layout == 'geo') {
+        forceElement.innerHTML = '';
+        forceElement.style.display = 'none';
+        initGeoLayout(businesses, edges, geoElement);
+        geoElement.style.display = '';
+    } else {
+        throw new Error("Unknown layout: " + layout);
+    }
 }
 
 (<any>window).init = init;
+(<any>window).changeLayout = changeLayout;
