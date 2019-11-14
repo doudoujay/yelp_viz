@@ -51,6 +51,7 @@ function removeAllDescendants(elem: HTMLElement) {
 
 function changeLayout(layout: string) {
     console.log(layout);
+    // Clear layout, then init the layout chosen
     if (layout == 'force') {
         removeAllDescendants(geoElement);
         geoElement.style.display = 'none';

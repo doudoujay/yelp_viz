@@ -4,6 +4,7 @@ const width = 400;
 const height = 600;
 
 export function initForceLayout(businesses: BusinessNode[], edges: Edge[], container: HTMLElement) {
+    // Remove nodes with no edges.
     let validNodes = new Set<BusinessNode>();
     edges.forEach(e => {
         validNodes.add(e.source);
