@@ -4,6 +4,13 @@ const width = 400;
 const height = 600;
 
 export function initForceLayout(businesses: BusinessNode[], edges: Edge[], container: HTMLElement) {
+    let validNodes = new Set<BusinessNode>();
+    edges.forEach(e => {
+        validNodes.add(e.source);
+        validNodes.add(e.target);
+    });
+    businesses = businesses.filter(d => validNodes.has(d));
+
     let svg = d3.select(container).append("svg");
     svg
         .style("width", "100%")
