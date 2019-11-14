@@ -1,8 +1,14 @@
 import { BusinessNode, Edge } from "./data";
 import * as d3 from 'd3';
+import { NodesView } from "./view";
 
-export function initGeoLayout(businesses: BusinessNode[], edges: Edge[], container: HTMLElement) {
-    function initMap() {
+export class GeoLayoutView extends NodesView {
+    constructor(nodes: BusinessNode[], edges: Edge[], container: HTMLElement) {
+        super(nodes, edges, container);
+    }
+    init(): void {
+        let businesses: BusinessNode[] = this.nodes;
+        let edges: Edge[] = this.edges;
         const labelsOff: google.maps.MapTypeStyle[] = [
             {
                 elementType: "labels.icon",
@@ -12,7 +18,7 @@ export function initGeoLayout(businesses: BusinessNode[], edges: Edge[], contain
                 ]
             }
         ];
-        let map = new google.maps.Map(container, {
+        let map = new google.maps.Map(this.container, {
             zoom: 13,
             // Centerd at Illinois. The user should be able to see al IL
             // businesses at this view point
@@ -50,7 +56,7 @@ export function initGeoLayout(businesses: BusinessNode[], edges: Edge[], contain
             // Adapted from https://medium.com/techtrument/how-many-miles-are-in-a-pixel-a0baf4611fff
             let meters_per_px = 156543.03392 / Math.pow(2, map.getZoom());
             nodes.forEach(node => {
-                node.setRadius(sizeScale((node.get('data')).review_count)*meters_per_px);
+                node.setRadius(sizeScale((node.get('data')).review_count) * meters_per_px);
             });
         });
 
@@ -60,7 +66,7 @@ export function initGeoLayout(businesses: BusinessNode[], edges: Edge[], contain
             .range(['yellow', 'red'])
             .interpolate(d3.interpolateHcl);
         const linkOpacityScale = d3.scaleLog().domain(linkWeightRange).range([0.3, 1]);
-        const linkWidthScale = d3.scaleLog().domain(linkWeightRange).range([1, 5]);
+        const linkWidthScale = d3.scaleLog().domain(linkWeightRange).range([1, 8]);
 
         let links = edges.map(link => {
             let l = new google.maps.Polyline({
@@ -77,5 +83,13 @@ export function initGeoLayout(businesses: BusinessNode[], edges: Edge[], contain
             return l;
         });
     }
-    initMap();
+    applyNodeFilter(filter: (node: BusinessNode) => boolean): void {
+        throw new Error("Method not implemented.");
+    }
+    applyEdgeFilter(filter: (edge: Edge) => boolean): void {
+        throw new Error("Method not implemented.");
+    }
+    setTooltipHandler(callback: (node: BusinessNode) => boolean): void {
+        throw new Error("Method not implemented.");
+    }
 }

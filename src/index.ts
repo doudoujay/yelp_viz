@@ -1,7 +1,7 @@
 import * as d3 from 'd3';
 import { businesses, edges, BusinessNode } from './data';
-import { initGeoLayout } from './geo'
-import { initForceLayout } from './force';
+import { ForceLayoutView } from './force';
+import { GeoLayoutView } from './geo';
 
 function createColorScale(keys: Array<string> | Set<string>) {
     if (!Array.isArray(keys)) {
@@ -35,7 +35,12 @@ preprocess();
 let geoElement = document.getElementById('google-map');
 let forceElement = document.getElementById('force-directed');
 
+let forceView = new ForceLayoutView(businesses, edges, forceElement);
+let geoView = new GeoLayoutView(businesses, edges, geoElement);
+
 function init() {
+    forceView.init();
+    geoView.init();
     if ((<any>document.getElementById('geo')).checked) {
         changeLayout('geo');
     } else {
@@ -51,17 +56,14 @@ function removeAllDescendants(elem: HTMLElement) {
 
 function changeLayout(layout: string) {
     console.log(layout);
+
     // Clear layout, then init the layout chosen
     if (layout == 'force') {
-        removeAllDescendants(geoElement);
-        geoElement.style.display = 'none';
-        initForceLayout(businesses, edges, forceElement);
-        forceElement.style.display = '';
+        geoView.hide();
+        forceView.show();
     } else if (layout == 'geo') {
-        removeAllDescendants(forceElement);
-        forceElement.style.display = 'none';
-        initGeoLayout(businesses, edges, geoElement);
-        geoElement.style.display = '';
+        forceView.hide();
+        geoView.show();
     } else {
         throw new Error("Unknown layout: " + layout);
     }
