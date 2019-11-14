@@ -17,6 +17,10 @@
       <input type="radio" id="force" name="drone" value="force" onchange="changeLayout(this.value);" checked>
       <label for="force">Force Directed Layout</label>
     </div>
+    <div>
+      <label for='edge-filter'>Edge Threshold</label>
+      <input type="range" id="edge-filter" min=7 max=128 step=1>
+    </div>
     
   </body>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB6tYVOSsxfy-HqlK2ztR0xkb6oN1deygI&callback=init"></script>

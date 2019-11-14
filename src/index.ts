@@ -73,5 +73,11 @@ function changeLayout(layout: string) {
     }
 }
 
+function nodeFilter(event: Event) {
+    const threshold = parseInt((event.target as HTMLInputElement).value);
+    currentView.applyEdgeFilter(e => e.data.length >= threshold);
+}
+
 (<any>window).init = init;
 (<any>window).changeLayout = changeLayout;
+document.getElementById('edge-filter').addEventListener('change', nodeFilter);
