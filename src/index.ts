@@ -2,6 +2,7 @@ import * as d3 from 'd3';
 import { businesses, edges, BusinessNode } from './data';
 import { ForceLayoutView } from './force';
 import { GeoLayoutView } from './geo';
+import { NodesView } from './view';
 
 function createColorScale(keys: Array<string> | Set<string>) {
     if (!Array.isArray(keys)) {
@@ -37,6 +38,7 @@ let forceElement = document.getElementById('force-directed');
 
 let forceView = new ForceLayoutView(businesses, edges, forceElement);
 let geoView = new GeoLayoutView(businesses, edges, geoElement);
+let currentView: NodesView;
 
 function init() {
     forceView.init();
@@ -61,9 +63,11 @@ function changeLayout(layout: string) {
     if (layout == 'force') {
         geoView.hide();
         forceView.show();
+        currentView = forceView;
     } else if (layout == 'geo') {
         forceView.hide();
         geoView.show();
+        currentView = geoView;
     } else {
         throw new Error("Unknown layout: " + layout);
     }
