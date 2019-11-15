@@ -12,6 +12,8 @@ export class ForceLayoutView extends NodesView {
     linkColorScale: d3.ScalePower<string, string>;
     colorScale: d3.ScaleSequential<string>;
     sizeScale: d3.ScalePower<number, number>;
+    tooltipCallback: (d: BusinessNode) => void;
+
     constructor(nodes: BusinessNode[], edges: Edge[], container: HTMLElement) {
         super(nodes, edges, container);
     }
@@ -36,6 +38,13 @@ export class ForceLayoutView extends NodesView {
         nodes
             .attr("r", d => this.sizeScale(d.review_count))
             .attr('fill', d => this.colorScale(d.stars))
+            .on('click', (d, index, group) => {
+                if (this.tooltipCallback) {
+                    this.tooltipCallback(d);
+                }
+                this.nodes.classed('selected', false);
+                group[index].classList.add('selected');
+            })
             .classed('node', true);
     }
     init(): void {
@@ -131,8 +140,8 @@ export class ForceLayoutView extends NodesView {
         this.simulation.force("link", d3.forceLink().links(newEdges));
         this.simulation.alpha(1).restart();
     }
-    setTooltipHandler(callback: (node: BusinessNode) => boolean): void {
-        throw new Error("Method not implemented.");
+    setTooltipHandler(callback: (node: BusinessNode) => void): void {
+        this.tooltipCallback = callback;
     }
 
 
