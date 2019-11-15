@@ -5,6 +5,7 @@ const width = 400;
 const height = 600;
 
 export class ForceLayoutView extends NodesView {
+    simulation: d3.Simulation<BusinessNode, undefined>;
     constructor(nodes: BusinessNode[], edges: Edge[], container: HTMLElement) {
         super(nodes, edges, container);
     }
@@ -77,11 +78,20 @@ export class ForceLayoutView extends NodesView {
             const boundingBox = `${rect.x} ${rect.y} ${rect.width} ${rect.height}`
             svg.attr("viewBox", boundingBox);
         }
-        let simulation = d3.forceSimulation(businesses)
+        this.simulation = d3.forceSimulation(businesses)
             .force('charge', d3.forceManyBody().strength(-1))
             .force('center', d3.forceCenter(width / 2, height / 2))
             .force('link', d3.forceLink().links(edges))
             .on('tick', ticked);
+    }
+    hide(): void {
+        super.hide();
+        this.simulation.stop();
+    }
+
+    show(): void {
+        super.show();
+        this.simulation.restart();
     }
     applyNodeFilter(filter: (node: BusinessNode) => boolean): void {
         throw new Error("Method not implemented.");
