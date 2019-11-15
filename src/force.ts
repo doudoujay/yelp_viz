@@ -10,29 +10,47 @@ export class ForceLayoutView extends NodesView {
     nodes: d3.Selection<SVGCircleElement, BusinessNode, SVGGElement, unknown>;
     linkWidthScale: d3.ScaleLogarithmic<number, number>;
     linkColorScale: d3.ScalePower<string, string>;
+    colorScale: d3.ScaleSequential<string>;
+    sizeScale: d3.ScalePower<number, number>;
     constructor(nodes: BusinessNode[], edges: Edge[], container: HTMLElement) {
         super(nodes, edges, container);
     }
-    init(): void {
+    getPositiveDegreeNodes(edges: Edge[]): BusinessNode[] {
         let businesses: BusinessNode[] = this.businessNodes;
-        let edges: Edge[] = this.edges;
         // Remove nodes with no edges.
         let validNodes = new Set<BusinessNode>();
         edges.forEach(e => {
             validNodes.add(e.source);
             validNodes.add(e.target);
         });
-        businesses = businesses.filter(d => validNodes.has(d));
+        return businesses.filter(d => validNodes.has(d));
+    }
+    styleEdges(links: d3.Selection<SVGLineElement, Edge, SVGGElement, unknown>) {
+        links
+            .attr('stroke-width', d => this.linkWidthScale(d.data.length))
+            .attr('stroke', d => this.linkColorScale(d.data.length))
+            // .attr('opacity', d => linkOpacityScale(d.data.length))
+            .classed("link", true);
+    }
+    styleNodes(nodes: d3.Selection<SVGCircleElement, BusinessNode, SVGGElement, unknown>) {
+        nodes
+            .attr("r", d => this.sizeScale(d.review_count))
+            .attr('fill', d => this.colorScale(d.stars))
+            .classed('node', true);
+    }
+    init(): void {
+        let edges: Edge[] = this.edges;
+        let businesses = this.getPositiveDegreeNodes(edges);
 
         let svg = d3.select(this.container).append("svg");
         svg
             .style("width", "100%")
             .style("height", "100%");
 
-        let colorScale = d3.scaleSequential(d3.interpolateBlues)
+        this.colorScale = d3.scaleSequential(d3.interpolateBlues)
             .domain(d3.extent(businesses, d => d.stars));
 
-        let sizeScale = d3.scaleSqrt()
+        this.sizeScale = d3.scaleSqrt()
             .domain(d3.extent(businesses, d => d.review_count))
             .range([0, 20]);
 
@@ -41,9 +59,7 @@ export class ForceLayoutView extends NodesView {
             .data(businesses)
             .enter()
             .append("circle")
-            .attr("r", d => sizeScale(d.review_count))
-            .attr('fill', d => colorScale(d.stars))
-            .classed('node', true);
+            .call(selection => this.styleNodes(selection));
 
         const linkWeightRange = d3.extent(edges, d => d.data.length);
         this.linkColorScale = d3.scaleSqrt<string>()
@@ -57,10 +73,7 @@ export class ForceLayoutView extends NodesView {
             .selectAll(".link")
             .data(edges)
             .enter().append("line")
-            .attr('stroke-width', d => this.linkWidthScale(d.data.length))
-            .attr('stroke', d => this.linkColorScale(d.data.length))
-            // .attr('opacity', d => linkOpacityScale(d.data.length))
-            .classed("link", true);
+            .call(selection => this.styleEdges(selection));
         let x = d3.scaleLinear()
             .domain([0, 30])
             .range([0, width]);
@@ -83,7 +96,7 @@ export class ForceLayoutView extends NodesView {
             svg.attr("viewBox", boundingBox);
         }
         this.simulation = d3.forceSimulation(businesses)
-            .force('charge', d3.forceManyBody().strength(-1))
+            .force('charge', d3.forceManyBody().strength(-4))
             .force('center', d3.forceCenter(width / 2, height / 2))
             .force('link', d3.forceLink().links(edges))
             .on('tick', ticked);
@@ -102,15 +115,19 @@ export class ForceLayoutView extends NodesView {
     }
     applyEdgeFilter(filter: (edge: Edge) => boolean): void {
         let newEdges = this.edges.filter(filter);
+        let newNodes = this.getPositiveDegreeNodes(newEdges);
+        this.nodes = this.nodes.data(newNodes, d => d.business_id);
+        this.nodes.exit().remove();
+        this.nodes = this.nodes.enter().append('circle')
+            .merge(this.nodes)
+            .call(selection => this.styleNodes(selection));
+
         this.links = this.links.data(newEdges, l => l.src + "_" + l.dst);
         this.links.exit().remove();
         this.links = this.links.enter()
             .append("line")
             .merge(this.links)
-            .attr('stroke-width', d => this.linkWidthScale(d.data.length))
-            .attr('stroke', d => this.linkColorScale(d.data.length))
-            // .attr('opacity', d => linkOpacityScale(d.data.length))
-            .classed("link", true);
+            .call(selection => this.styleEdges(selection));
         this.simulation.force("link", d3.forceLink().links(newEdges));
         this.simulation.alpha(1).restart();
     }
