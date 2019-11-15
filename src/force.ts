@@ -6,6 +6,10 @@ const height = 600;
 
 export class ForceLayoutView extends NodesView {
     simulation: d3.Simulation<BusinessNode, undefined>;
+    links: d3.Selection<SVGLineElement, Edge, SVGGElement, unknown>;
+    nodes: d3.Selection<SVGCircleElement, BusinessNode, SVGGElement, unknown>;
+    linkWidthScale: d3.ScaleLogarithmic<number, number>;
+    linkColorScale: d3.ScalePower<string, string>;
     constructor(nodes: BusinessNode[], edges: Edge[], container: HTMLElement) {
         super(nodes, edges, container);
     }
@@ -32,7 +36,7 @@ export class ForceLayoutView extends NodesView {
             .domain(d3.extent(businesses, d => d.review_count))
             .range([0, 20]);
 
-        let nodes = svg.append("g").classed("nodes_container", true)
+        this.nodes = svg.append("g").classed("nodes_container", true)
             .selectAll(".node")
             .data(businesses)
             .enter()
@@ -42,19 +46,19 @@ export class ForceLayoutView extends NodesView {
             .classed('node', true);
 
         const linkWeightRange = d3.extent(edges, d => d.data.length);
-        const linkColorScale = d3.scaleSqrt<string>()
+        this.linkColorScale = d3.scaleSqrt<string>()
             .domain(linkWeightRange)
             .range(['yellow', 'red'])
             .interpolate(d3.interpolateHcl);
         const linkOpacityScale = d3.scaleLog().domain(linkWeightRange).range([0.3, 1]);
-        const linkWidthScale = d3.scaleLog().domain(linkWeightRange).range([1, 8]);
+        this.linkWidthScale = d3.scaleLog().domain(linkWeightRange).range([1, 8]);
 
-        let links = svg.append("g").classed("links_container", true)
+        this.links = svg.append("g").classed("links_container", true)
             .selectAll(".link")
             .data(edges)
             .enter().append("line")
-            .attr('stroke-width', d => linkWidthScale(d.data.length))
-            .attr('stroke', d => linkColorScale(d.data.length))
+            .attr('stroke-width', d => this.linkWidthScale(d.data.length))
+            .attr('stroke', d => this.linkColorScale(d.data.length))
             // .attr('opacity', d => linkOpacityScale(d.data.length))
             .classed("link", true);
         let x = d3.scaleLinear()
@@ -63,13 +67,13 @@ export class ForceLayoutView extends NodesView {
         let y = d3.scaleLinear()
             .domain([0, 30])
             .range([height, 0]);
-        function ticked() {
+        let ticked = () => {
             x.domain(d3.extent(businesses, (d: any) => d.x));
             y.domain(d3.extent(businesses, (d: any) => d.y));
-            nodes
+            this.nodes
                 .attr("cx", d => x(d.x))
                 .attr("cy", d => y(d.y));
-            links
+            this.links
                 .attr("x1", d => x(d.source.x))
                 .attr("y1", d => y(d.source.y))
                 .attr("x2", d => x(d.target.x))
@@ -97,7 +101,18 @@ export class ForceLayoutView extends NodesView {
         throw new Error("Method not implemented.");
     }
     applyEdgeFilter(filter: (edge: Edge) => boolean): void {
-        throw new Error("Method not implemented.");
+        let newEdges = this.edges.filter(filter);
+        this.links = this.links.data(newEdges, l => l.src + "_" + l.dst);
+        this.links.exit().remove();
+        this.links = this.links.enter()
+            .append("line")
+            .merge(this.links)
+            .attr('stroke-width', d => this.linkWidthScale(d.data.length))
+            .attr('stroke', d => this.linkColorScale(d.data.length))
+            // .attr('opacity', d => linkOpacityScale(d.data.length))
+            .classed("link", true);
+        this.simulation.force("link", d3.forceLink().links(newEdges));
+        this.simulation.alpha(1).restart();
     }
     setTooltipHandler(callback: (node: BusinessNode) => boolean): void {
         throw new Error("Method not implemented.");
