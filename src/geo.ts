@@ -3,11 +3,14 @@ import * as d3 from 'd3';
 import { NodesView } from "./view";
 
 export class GeoLayoutView extends NodesView {
-    constructor(nodes: BusinessNode[], edges: Edge[], container: HTMLElement) {
-        super(nodes, edges, container);
+    constructor(businesses: BusinessNode[], edges: Edge[], container: HTMLElement) {
+        super(businesses, edges, container);
     }
+    links: google.maps.Polyline[];
+    nodes: google.maps.Circle[];
+
     init(): void {
-        let businesses: BusinessNode[] = this.nodes;
+        let businesses: BusinessNode[] = this.businessNodes;
         let edges: Edge[] = this.edges;
         const labelsOff: google.maps.MapTypeStyle[] = [
             {
@@ -36,7 +39,7 @@ export class GeoLayoutView extends NodesView {
             .domain(d3.extent(businesses, d => d.review_count))
             .range([0, 20]);
         let meters_per_px = 156543.03392 / Math.pow(2, map.getZoom());
-        let nodes = businesses.map(node => {
+        this.nodes = businesses.map(node => {
             let circle = new google.maps.Circle({
                 strokeColor: "white",
                 strokeOpacity: 1,
@@ -55,7 +58,7 @@ export class GeoLayoutView extends NodesView {
         map.addListener('zoom_changed', _ => {
             // Adapted from https://medium.com/techtrument/how-many-miles-are-in-a-pixel-a0baf4611fff
             let meters_per_px = 156543.03392 / Math.pow(2, map.getZoom());
-            nodes.forEach(node => {
+            this.nodes.forEach(node => {
                 node.setRadius(sizeScale((node.get('data')).review_count) * meters_per_px);
             });
         });
@@ -68,7 +71,7 @@ export class GeoLayoutView extends NodesView {
         const linkOpacityScale = d3.scaleLog().domain(linkWeightRange).range([0.3, 1]);
         const linkWidthScale = d3.scaleLog().domain(linkWeightRange).range([1, 8]);
 
-        let links = edges.map(link => {
+        this.links = edges.map(link => {
             let l = new google.maps.Polyline({
                 path: [link.source, link.target],
                 map: map,
@@ -87,7 +90,9 @@ export class GeoLayoutView extends NodesView {
         throw new Error("Method not implemented.");
     }
     applyEdgeFilter(filter: (edge: Edge) => boolean): void {
-        throw new Error("Method not implemented.");
+        this.links.forEach(l => {
+            l.setVisible(filter(l.get('data')));
+        })
     }
     setTooltipHandler(callback: (node: BusinessNode) => boolean): void {
         throw new Error("Method not implemented.");

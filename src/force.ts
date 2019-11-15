@@ -10,7 +10,7 @@ export class ForceLayoutView extends NodesView {
         super(nodes, edges, container);
     }
     init(): void {
-        let businesses: BusinessNode[] = this.nodes;
+        let businesses: BusinessNode[] = this.businessNodes;
         let edges: Edge[] = this.edges;
         // Remove nodes with no edges.
         let validNodes = new Set<BusinessNode>();

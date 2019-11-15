@@ -39,6 +39,7 @@ let forceElement = document.getElementById('force-directed');
 let forceView = new ForceLayoutView(businesses, edges, forceElement);
 let geoView = new GeoLayoutView(businesses, edges, geoElement);
 let currentView: NodesView;
+let currentEdgeThreshold: number = 7;
 
 function init() {
     forceView.init();
@@ -71,11 +72,12 @@ function changeLayout(layout: string) {
     } else {
         throw new Error("Unknown layout: " + layout);
     }
+    currentView.applyEdgeFilter(e => e.data.length >= currentEdgeThreshold);
 }
 
 function nodeFilter(event: Event) {
-    const threshold = parseInt((event.target as HTMLInputElement).value);
-    currentView.applyEdgeFilter(e => e.data.length >= threshold);
+    currentEdgeThreshold = parseInt((event.target as HTMLInputElement).value);
+    currentView.applyEdgeFilter(e => e.data.length >= currentEdgeThreshold);
 }
 
 (<any>window).init = init;
