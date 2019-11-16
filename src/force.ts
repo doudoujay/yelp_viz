@@ -1,6 +1,7 @@
 import { BusinessNode, Edge } from "./data";
 import * as d3 from 'd3'
 import { NodesView } from "./view";
+
 const width = 400;
 const height = 600;
 
@@ -17,6 +18,7 @@ export class ForceLayoutView extends NodesView {
     constructor(nodes: BusinessNode[], edges: Edge[], container: HTMLElement) {
         super(nodes, edges, container);
     }
+
     getPositiveDegreeNodes(edges: Edge[]): BusinessNode[] {
         let businesses: BusinessNode[] = this.businessNodes;
         // Remove nodes with no edges.

@@ -8,13 +8,10 @@ export class GeoLayoutView extends NodesView {
         super(businesses, edges, container);
     }
 
-    click(node: BusinessNode): void{
-        console.log("clicked circle");
-        updateBussinessInformation(node);
-    }
     links: google.maps.Polyline[];
     nodes: google.maps.Circle[];
-
+    tooltipCallback: (d: BusinessNode) => void;
+    
     init(): void {
         let businesses: BusinessNode[] = this.businessNodes;
         let edges: Edge[] = this.edges;
@@ -59,7 +56,9 @@ export class GeoLayoutView extends NodesView {
             });
             circle.set('data', node);
             google.maps.event.addListener(circle, 'click', ev => {
-                this.click(node);
+                if (this.tooltipCallback) {
+                    this.tooltipCallback(node);
+                }
             });
             return circle;
         });
@@ -103,7 +102,7 @@ export class GeoLayoutView extends NodesView {
             l.setVisible(filter(l.get('data')));
         })
     }
-    setTooltipHandler(callback: (node: BusinessNode) => boolean): void {
-        throw new Error("Method not implemented.");
+    setTooltipHandler(callback: (node: BusinessNode) => void): void {
+        this.tooltipCallback = callback;
     }
 }

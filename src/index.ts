@@ -4,6 +4,7 @@ import { businesses, edges, BusinessNode } from './data';
 import { ForceLayoutView } from './force';
 import { GeoLayoutView } from './geo';
 import { NodesView } from './view';
+import {updateBussinessInformation} from './details';
 
 function createColorScale(keys: Array<string> | Set<string>) {
     if (!Array.isArray(keys)) {
@@ -37,8 +38,21 @@ preprocess();
 let geoElement = document.getElementById('google-map');
 let forceElement = document.getElementById('force-directed');
 
+let geoClickHandler = (node: BusinessNode) => {
+    console.log("clicked circle");
+    updateBussinessInformation(node);
+}
+
+let forceClickHandler = (node: BusinessNode) => {
+    console.log("clicked circle");
+    updateBussinessInformation(node);
+}
+
 let forceView = new ForceLayoutView(businesses, edges, forceElement);
+forceView.setTooltipHandler(forceClickHandler);
 let geoView = new GeoLayoutView(businesses, edges, geoElement);
+geoView.setTooltipHandler(geoClickHandler);
+
 let currentView: NodesView;
 let currentEdgeThreshold: number = 7;
 
