@@ -1,4 +1,5 @@
 import * as d3 from 'd3';
+import * as $ from 'jquery';
 import { businesses, edges, BusinessNode } from './data';
 import { ForceLayoutView } from './force';
 import { GeoLayoutView } from './geo';
@@ -77,6 +78,7 @@ function nodeFilter(event: Event) {
     const threshold = parseInt((event.target as HTMLInputElement).value);
     currentView.applyEdgeFilter(e => e.data.length >= threshold);
 }
+
 
 (<any>window).init = init;
 (<any>window).changeLayout = changeLayout;

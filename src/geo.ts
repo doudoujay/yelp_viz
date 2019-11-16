@@ -1,11 +1,18 @@
 import { BusinessNode, Edge } from "./data";
 import * as d3 from 'd3';
 import { NodesView } from "./view";
+import {updateBussinessInformation} from './details';
 
 export class GeoLayoutView extends NodesView {
     constructor(nodes: BusinessNode[], edges: Edge[], container: HTMLElement) {
         super(nodes, edges, container);
     }
+
+    click(node: BusinessNode): void{
+        console.log("clicked circle");
+        updateBussinessInformation(node);
+    }
+
     init(): void {
         let businesses: BusinessNode[] = this.nodes;
         let edges: Edge[] = this.edges;
@@ -49,6 +56,9 @@ export class GeoLayoutView extends NodesView {
                 zIndex: -1,
             });
             circle.set('data', node);
+            google.maps.event.addListener(circle, 'click', ev => {
+                this.click(node);
+            });
             return circle;
         });
 
