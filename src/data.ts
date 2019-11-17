@@ -1,6 +1,6 @@
 import * as raw_businesses from '../data/IL_minified.json';
 import * as raw_edges from '../data/IL_edges.json'
-
+import * as raw_checkin_map from '../data/IL_checkin_stat_map.json';
 export interface BusinessNode {
     business_id: string,
     name: string,
@@ -8,10 +8,10 @@ export interface BusinessNode {
     city: string,
     state: string,
     postal_code: string,
-    lat : number,
-    lng : number,
-    stars : number,
-    review_count : number,
+    lat: number,
+    lng: number,
+    stars: number,
+    review_count: number,
     categories: Array<string>,
     links?: Array<google.maps.Polyline>,
 
@@ -27,11 +27,27 @@ export interface Edge {
     source: BusinessNode,
     target: BusinessNode,
 }
+
 raw_businesses.forEach(d => {
     (<any>d).lat = d.latitude;
     (<any>d).lng = d.longitude;
     delete d.latitude;
     delete d.longitude;
 })
+
+export interface CheckinStat {
+    day: string,
+    hour: string,
+    count: number,
+}
+
+export interface CheckinData {
+    business_id: string,
+    date: Array<string>,
+    stat: Array<CheckinStat>,
+}
+
+
 export let businesses = raw_businesses as Array<BusinessNode>;
 export let edges = (raw_edges as Array<Edge>).filter(d => d.data.length >= 7);
+export let checkin_map = raw_checkin_map as { [business_id: string]: CheckinData };

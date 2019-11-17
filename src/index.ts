@@ -1,9 +1,10 @@
 import * as d3 from 'd3';
-import { businesses, edges, BusinessNode } from './data';
+import { businesses, edges, BusinessNode, checkin_map } from './data';
 import { ForceLayoutView } from './force';
 import { GeoLayoutView } from './geo';
 import { NodesView } from './view';
-import {updateBussinessInformation, updateCheckinInformation} from './details';
+import { Checkin } from './checkin';
+import { updateBussinessInformation } from './details';
 
 function createColorScale(keys: Array<string> | Set<string>) {
     if (!Array.isArray(keys)) {
@@ -40,13 +41,13 @@ let forceElement = document.getElementById('force-directed');
 let geoClickHandler = (node: BusinessNode) => {
     console.log("clicked circle");
     updateBussinessInformation(node);
-    updateCheckinInformation(node);
+    checkin.render(checkin_map[node.business_id]);
 }
 
 let forceClickHandler = (node: BusinessNode) => {
     console.log("clicked circle");
     updateBussinessInformation(node);
-    updateCheckinInformation(node);
+    checkin.render(checkin_map[node.business_id]);
 }
 
 let forceView = new ForceLayoutView(businesses, edges, forceElement);
@@ -54,12 +55,15 @@ forceView.setTooltipHandler(forceClickHandler);
 let geoView = new GeoLayoutView(businesses, edges, geoElement);
 geoView.setTooltipHandler(geoClickHandler);
 
+let checkin = new Checkin();
+
 let currentView: NodesView;
 let currentEdgeThreshold: number = 7;
 
 function init() {
     forceView.init();
     geoView.init();
+    checkin.render();
     if ((<any>document.getElementById('geo')).checked) {
         changeLayout('geo');
     } else {
