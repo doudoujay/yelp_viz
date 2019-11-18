@@ -27,6 +27,11 @@ export interface Edge {
     source: BusinessNode,
     target: BusinessNode,
 }
-
+raw_businesses.forEach(d => {
+    (<any>d).lat = d.latitude;
+    (<any>d).lng = d.longitude;
+    delete d.latitude;
+    delete d.longitude;
+})
 export let businesses = raw_businesses as Array<BusinessNode>;
 export let edges = (raw_edges as Array<Edge>).filter(d => d.data.length >= 7);
