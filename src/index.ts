@@ -1,10 +1,9 @@
 import * as d3 from 'd3';
-import * as $ from 'jquery';
 import { businesses, edges, BusinessNode } from './data';
 import { ForceLayoutView } from './force';
 import { GeoLayoutView } from './geo';
 import { NodesView } from './view';
-import {updateBussinessInformation} from './details';
+import {updateBussinessInformation, updateCheckinInformation} from './details';
 
 function createColorScale(keys: Array<string> | Set<string>) {
     if (!Array.isArray(keys)) {
@@ -41,11 +40,13 @@ let forceElement = document.getElementById('force-directed');
 let geoClickHandler = (node: BusinessNode) => {
     console.log("clicked circle");
     updateBussinessInformation(node);
+    updateCheckinInformation(node);
 }
 
 let forceClickHandler = (node: BusinessNode) => {
     console.log("clicked circle");
     updateBussinessInformation(node);
+    updateCheckinInformation(node);
 }
 
 let forceView = new ForceLayoutView(businesses, edges, forceElement);
