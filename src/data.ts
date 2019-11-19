@@ -10,6 +10,8 @@ export interface BusinessNode {
     postal_code: string,
     lat: number,
     lng: number,
+    longitude?: number,
+    latitude?: number,
     stars: number,
     review_count: number,
     categories: Array<string>,
@@ -28,12 +30,12 @@ export interface Edge {
     target: BusinessNode,
 }
 
-raw_businesses.forEach(d => {
-    (<any>d).lat = d.latitude;
-    (<any>d).lng = d.longitude;
-    delete d.latitude;
-    delete d.longitude;
-})
+// raw_businesses.forEach(d => {
+//     d.lat = d.latitude;
+//     d.lng = d.longitude;
+//     delete d.latitude;
+//     delete d.longitude;
+// })
 
 export interface CheckinStat {
     day: string,
