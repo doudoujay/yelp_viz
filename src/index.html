@@ -7,7 +7,10 @@
     circle.selected {
       stroke: black;
       stroke-width: 1px;
-    };
+    }
+
+    ;
+
     .node {
       cursor: pointer;
     }
@@ -18,21 +21,25 @@
     href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
     integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+  </script>
   <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js"
-    integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U"
-    crossorigin="anonymous"></script>
+    integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous">
+  </script>
   <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js"
-    integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9"
-    crossorigin="anonymous"></script>
-  <script>$(document).ready(function () { $('body').bootstrapMaterialDesign(); });</script>
+    integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous">
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('body').bootstrapMaterialDesign();
+    });
+  </script>
 </head>
 
 <body style="width: 100%;">
   <div class="container">
     <div class="row">
-      <form class="col-md-6">
+      <form class="col-md-4">
         <span>Select a display style:</span>
         <div class="radio">
           <label><input type="radio" id="geo" name="drone" value="geo" onchange="changeLayout(this.value);">Geographical
@@ -43,9 +50,20 @@
               checked>Force Directed Layout</label>
         </div>
       </form>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <label for='edge-filter'>Edge Threshold</label>
         <input type="range" id="edge-filter" min=7 max=128 step=1>
+      </div>
+      <div class="col-md-4">
+        <div class="dropdown">
+          <label>Category filter</label>
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Select a category
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -69,7 +87,7 @@
             <div id="checkin-heatmap" style="height: 40vh; width: 100%;"></div>
             <span id="checkin-null">No node spefified</span>
           </p>
-          
+
         </div>
       </div>
 
@@ -98,8 +116,10 @@
               </a>
               <a class="list-group-item">
                 <i class="material-icons">category</i>
-                <div id="biz_categories">categories</div>
+                <div>category</div>
               </a>
+              <ul id="biz_categories" class="list-group">
+              </ul>
             </ul>
           </p>
           <a href="#" class="card-link">Card link</a>

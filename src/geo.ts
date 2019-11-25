@@ -95,7 +95,9 @@ export class GeoLayoutView extends NodesView {
         });
     }
     applyNodeFilter(filter: (node: BusinessNode) => boolean): void {
-        throw new Error("Method not implemented.");
+        this.nodes.forEach(n => {
+            n.setVisible(filter(n.get('data')));
+        });
     }
     applyEdgeFilter(filter: (edge: Edge) => boolean): void {
         this.links.forEach(l => {

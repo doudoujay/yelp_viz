@@ -1,6 +1,8 @@
 import * as raw_businesses from '../data/IL_minified.json';
 import * as raw_edges from '../data/IL_edges.json'
 import * as raw_checkin_map from '../data/IL_checkin_stat_map.json';
+import * as raw_category_map from '../data/IL_categories_stat.json';
+
 export interface BusinessNode {
     business_id: string,
     name: string,
@@ -37,6 +39,11 @@ export interface Edge {
 //     delete d.longitude;
 // })
 
+export interface category{
+    name: string,
+    count: number,
+}
+
 export interface CheckinStat {
     day: string,
     hour: string,
@@ -53,3 +60,4 @@ export interface CheckinData {
 export let businesses = raw_businesses as Array<BusinessNode>;
 export let edges = (raw_edges as Array<Edge>).filter(d => d.data.length >= 7);
 export let checkin_map = raw_checkin_map as { [business_id: string]: CheckinData };
+export let category_map = raw_category_map as {[key: string]: number};
